@@ -1,0 +1,25 @@
+body 
+{
+    background-color:#c3c3c3;
+}
+ 
+h1 
+{
+    color: #4c6ebb;
+}
+
+#container 
+{
+   width: 70%;  
+   padding-left: 15vw;
+}
+ 
+#canvas 
+{
+    width: 100%;
+    background-color: black;
+}
+
+.header {
+  text-align: center;
+}
