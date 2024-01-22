@@ -49,4 +49,4 @@ class Ball {
     }
 }
 
-export default Ball
+export default Ball;
