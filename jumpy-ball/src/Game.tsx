@@ -6,40 +6,55 @@ import "./Game.css";
 function Game() {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
-    const canvasRef = useRef(null);
     const animationFrameRef = useRef(0);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const height = 400;
     const width = 600;
 
-    useEffect(() => {
-        let ball: any;
-        let pipe: any = [];
+    let ball: Ball;
+        let pipe: Pipe[] = [];
         let reset: number = 5;
         let pipeSpace: number = 0;
 
+
+    useEffect(() => {
         // Create Canvas Object
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
 
-        // Create Ball and Pipe Objects
-        ball = new Ball(context, height);
+        // Get The Current Time
+        let t = Date.now();
+        let ti = Date.now();
 
-        for (let i = 0; i < 5; i++) {
-            pipe.push(new Pipe(context, height));
+        // Initial Setup
+        function initialSetup() {
+            // Create Ball Object
+            ball = new Ball(context, height);
+
+            // Create Pipe Objects
+            for (let i = 0; i < 5; i++) {
+                pipe.push(new Pipe(context, height));
+            }
+
+            // Add Space Between Pipe Objects
+            for (let i = 0; i < pipe.length; i++) {
+                pipeSpace += 200;
+                pipe[i].x += pipeSpace;
+            }
+
+            // Draw Initial Board
+            ball.draw();
+            printscore();
         }
 
-        // Add Space Between Pipe Objects
-        for (let i = 0; i < pipe.length; i++) {
-            pipeSpace += 200;
-            pipe[i].x += pipeSpace;
-        }
-
+        // Print Score
         function printscore() {
             context.font = '20px Arial';
             context.fillStyle = 'white';
             context.fillText("Score: " + score, 20, 30);
         }
 
+        // Print Game Over Message
         function renderGameOver() {
             context.font = '50px Arial';
             context.fillStyle = 'red';
@@ -49,13 +64,6 @@ function Game() {
             context.fillStyle = 'red';
             context.fillText("Score: " + score, width / 2.7, height / 1.9);
         }
-
-        // Draw Initial Board
-        ball.draw();
-        printscore();
-
-        let t = Date.now();
-        let ti = Date.now();
 
         // Move Ball
         function moveBall() {
@@ -78,53 +86,20 @@ function Game() {
         }
 
         // Move Ball on Key Press
-        function handleKeyDown() {
+        function handleKeyPress() {
             if (!gameOver) {
-                if (ball.y < 300) {
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 10;
-                    moveBall();
-                    ball.y -= 20;
-                    moveBall();
-                }
-                else {
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 10;
-                    moveBall();
-                    ball.y -= 25;
-                    moveBall();
-                }
+                ball.y -= 35;
             }
         }
 
         // Move Ball on Screen Press
         function handleTouchStart() {
             if (!gameOver) {
-                if (ball.y < 300) {
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 10;
-                    moveBall();
-                    ball.y -= 20;
-                    moveBall();
-                }
-                else {
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 5;
-                    moveBall();
-                    ball.y -= 10;
-                    moveBall();
-                    ball.y -= 25;
-                    moveBall();
-                }
+                ball.y -= 35;
             }
         }
 
+        // Handle Ball Collision
         function handleCollision() {
             // Check If Ball Touches Ground or Ceiling
             if (ball.y >= height - 20 || ball.y <= 20) {
@@ -154,7 +129,7 @@ function Game() {
                             renderGameOver();
                         }
                         return true;
-                    }); 
+                    });
                 }
             }
         }
@@ -193,15 +168,22 @@ function Game() {
             if (!gameOver) {
                 animationFrameRef.current = requestAnimationFrame(movePipe);
             }
-        }   
-        document.addEventListener('keydown', handleKeyDown);
+        }
+
+        initialSetup();
+
+
+        document.addEventListener('keypress', handleKeyPress);
         document.addEventListener('touchstart', handleTouchStart);
-        movePipe();
+        if (!gameOver) {
+            movePipe();
+            moveBall();
+        }
 
         // Cleanup Function
         return () => {
             cancelAnimationFrame(animationFrameRef.current);
-            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keypress', handleKeyPress);
             document.removeEventListener('touchstart', handleTouchStart);
         }
 
