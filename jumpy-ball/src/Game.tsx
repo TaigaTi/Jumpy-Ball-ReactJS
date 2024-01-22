@@ -7,7 +7,7 @@ function Game() {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const animationFrameRef = useRef(0);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const canvasRef = useRef(null);
     const height = 400;
     const width = 600;
 
