@@ -35,8 +35,6 @@ class Pipe {
             context.rect(this.x, height - this.bottom, this.w, this.bottom);
             context.fillStyle = "white";
             context.fill();
-
-            console.log("Yes");
         }
 
         // Clear Pipe Path

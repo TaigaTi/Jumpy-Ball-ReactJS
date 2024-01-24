@@ -10,7 +10,9 @@ function App() {
           <h1>My Jumper Game</h1>
           <p>A fun flappy-bird like game.</p>
         </div>
-        <Canvas height={400} width={600} />
+        <div className="container">
+          <Canvas height={400} width={600} />
+        </div>
       </div>
     </>
   )

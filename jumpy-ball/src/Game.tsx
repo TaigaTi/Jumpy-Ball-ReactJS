@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Ball from "./Ball";
 import Pipe from "./Pipe";
 
-function Game(props: { context: CanvasRenderingContext2D; height: number; width: number; }) {
+function Game(props) {
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const animationFrameRef = useRef(0);
@@ -11,14 +11,12 @@ function Game(props: { context: CanvasRenderingContext2D; height: number; width:
     const height = props.height;
     const width = props.width;
 
-    let ball: Ball;
-    let pipes: Pipe[] = [];
+    const ball: Ball = new Ball(context, height);
+    const pipes: Pipe[] = [];
+
     let reset: number = 5;
     let t = Date.now();
     let ti = Date.now();
-
-    // Create Ball Object
-    ball = new Ball(context, height);
 
     // Create Pipe Objects
     for (let i = 0; i < 5; i++) {
@@ -52,23 +50,21 @@ function Game(props: { context: CanvasRenderingContext2D; height: number; width:
 
     // Move Ball
     function moveBall() {
-        if (context) {
-            const timePassed = (Date.now() - ti) / 1000;
-            ti = Date.now();
+        const timePassed = (Date.now() - ti) / 1000;
+        ti = Date.now();
 
-            ball.clear();
-            for (let i = 0; i < pipes.length; i++) {
-                pipes[i].draw();
-            }
-            ball.draw();
-            printscore(context);
+        for (let i = 0; i < pipes.length; i++) {
+            pipes[i].draw();
+        }
+        ball.clear();
+        ball.draw();
+        printscore(context);
 
-            ball.gravity(timePassed);
-            ball.onground();
+        ball.gravity(timePassed);
+        ball.onground();
 
-            if (!gameOver) {
-                window.requestAnimationFrame(moveBall);
-            }
+        if (!gameOver) {
+            window.requestAnimationFrame(moveBall);
         }
     }
 
@@ -111,50 +107,49 @@ function Game(props: { context: CanvasRenderingContext2D; height: number; width:
 
     // Move Pipes Across Screen
     function movePipe() {
-        if (context) {
-            const ptimePassed = (Date.now() - t) / 1000;
-            t = Date.now();
+        const ptimePassed = (Date.now() - t) / 1000;
+        t = Date.now();
 
-            for (let i = 0; i < pipes.length; i++) {
-                pipes[i].clear();
-                printscore(context);
-                pipes[i].draw();
-            }
+        for (let i = 0; i < pipes.length; i++) {
+            pipes[i].clear();
+            pipes[i].draw();
+        }
 
-            // Creates New Pipes and Deletes Old Ones
-            for (let i = 0; i < pipes.length; i++) {
-                pipes[i].x -= (pipes[i].speed * ptimePassed);
+        // Creates New Pipes and Deletes Old Ones
+        for (let i = 0; i < pipes.length; i++) {
+            pipes[i].x -= (pipes[i].speed * ptimePassed);
 
-                if (pipes[i].x < -40) {
-                    pipes.splice(i, 1);
-                    pipes.push(new Pipe(context, height));
-                    reset++;
+            if (pipes[i].x < -40) {
+                pipes.splice(i, 1);
+                pipes.push(new Pipe(context, height));
+                reset++;
 
-                    if (reset > 5) {
-                        pipes[pipes.length - 1].x += 360;
-                    }
-                    else {
-                        pipes[pipes.length - 1].x += 200;
-                    }
+                if (reset > 5) {
+                    pipes[pipes.length - 1].x += 360;
+                }
+                else {
+                    pipes[pipes.length - 1].x += 200;
                 }
             }
-
-            handleCollision();
-
-            if (!gameOver) {
-                animationFrameRef.current = requestAnimationFrame(movePipe);
-            }
         }
+
+        handleCollision();
+
+        if (!gameOver) {
+            animationFrameRef.current = requestAnimationFrame(movePipe);
+        }
+
     }
 
     useEffect(() => {
-        document.addEventListener('keypress', handleKeyPress);
-        document.addEventListener('touchstart', handleTouchStart);
-        if (!gameOver) {
-            movePipe();
-            moveBall();
+        if (context) {
+            document.addEventListener('keypress', handleKeyPress);
+            document.addEventListener('touchstart', handleTouchStart);
+            if (!gameOver) {
+                moveBall();
+                movePipe();
+            }
         }
-
 
         // Cleanup Function
         return () => {

@@ -7,12 +7,18 @@ class Ball {
     clear: () => void;
     gravity: (timePassed: number) => void;
     onground: () => void;
+    render: () => void;
 
     constructor(context: CanvasRenderingContext2D, height: number) {
         this.x = height / 4;
         this.y = height / 2;
         this.r = 20;
         this.speed = 45;
+
+        this.render = function() {
+            this.clear();
+            this.draw();
+        }
 
         // Draw Ball
         this.draw = function () {
