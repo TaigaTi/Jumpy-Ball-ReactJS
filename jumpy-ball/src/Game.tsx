@@ -3,9 +3,10 @@ import Ball from "./Ball";
 import Pipe from "./Pipe";
 
 function Game(props) {
-    const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const animationFrameRef = useRef(0);
+    let isGameOver = false;
+    let score = 0;
 
     const context = props.context;
     const height = props.height;
@@ -44,8 +45,6 @@ function Game(props) {
         context.font = '40px Arial';
         context.fillStyle = 'red';
         context.fillText("Score: " + score, width / 2.7, height / 1.9);
-
-        setGameOver((prevGameOver) => !prevGameOver);
     }
 
     // Move Ball
@@ -53,10 +52,10 @@ function Game(props) {
         const timePassed = (Date.now() - ti) / 1000;
         ti = Date.now();
 
+        ball.clear();
         for (let i = 0; i < pipes.length; i++) {
             pipes[i].draw();
         }
-        ball.clear();
         ball.draw();
         printscore(context);
 
@@ -70,15 +69,16 @@ function Game(props) {
 
     // Move Ball on Key Press
     function handleKeyPress() {
-        if (!gameOver) {
+        if (!gameOver && !isGameOver) {
             ball.y -= 35;
         }
     }
 
     // Move Ball on Screen Press
     function handleTouchStart() {
-        if (!gameOver) {
+        if (!gameOver && !isGameOver) {
             ball.y -= 35;
+            ball.speed = 1000
         }
     }
 
@@ -87,6 +87,7 @@ function Game(props) {
         // Check If Ball Touches Ground or Ceiling
         if (ball.y >= height - 20 || ball.y <= 20) {
             renderGameOver(context);
+            isGameOver = true;
         }
 
         // Check If Ball Hits Pipe
@@ -94,13 +95,15 @@ function Game(props) {
             if (ball.y - 18 > pipes[0].top && ball.y + 18 < (height - pipes[0].bottom)) {
                 if (pipes[0].x < ball.x) {
                     if (!pipes[0].checked) {
-                        setScore((prevScore) => prevScore + 1);
+                        // setScore((prevScore) => prevScore + 1);
+                        score += 1;
                         pipes[0].checked = true;
                     }
                 }
             }
             else {
                 renderGameOver(context);
+                isGameOver = true;
             }
         }
     }
@@ -145,9 +148,12 @@ function Game(props) {
         if (context) {
             document.addEventListener('keypress', handleKeyPress);
             document.addEventListener('touchstart', handleTouchStart);
-            if (!gameOver) {
+            if (!gameOver && !isGameOver) {
                 moveBall();
                 movePipe();
+            } 
+            if (isGameOver) {
+                renderGameOver(context);
             }
         }
 
@@ -156,9 +162,13 @@ function Game(props) {
             cancelAnimationFrame(animationFrameRef.current);
             document.removeEventListener('keypress', handleKeyPress);
             document.removeEventListener('touchstart', handleTouchStart);
+           
+            if (isGameOver) {
+                renderGameOver(context);
+            }
         }
 
-    }, [score, gameOver]);
+    }, [ gameOver ]);
 
     return <></>;
 }

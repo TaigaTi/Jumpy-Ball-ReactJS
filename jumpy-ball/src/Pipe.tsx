@@ -39,8 +39,8 @@ class Pipe {
 
         // Clear Pipe Path
         this.clear = function() {
-            context.clearRect(this.x, 0, this.w + 5, this.top);
-            context.clearRect(this.x, height - this.bottom, this.w + 5, this.bottom);
+            context.clearRect(this.x, 0, this.w, this.top);
+            context.clearRect(this.x, height - this.bottom, this.w, this.bottom);
         }
     }
 }
