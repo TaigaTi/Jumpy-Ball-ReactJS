@@ -10,7 +10,7 @@ class Pipe {
     draw: () => void;
     clear: () => void;
 
-    constructor(context:any, height:number) 
+    constructor(context: CanvasRenderingContext2D, height:number) 
     {
         this.x = 600;
         this.y = 0;
@@ -20,20 +20,23 @@ class Pipe {
         this.top = Math.floor(Math.random() * (((3 / 4) * height) - (height / 6) + 1) + (height / 6));
         this.bottom = height - (this.top + this.spacing);
         this.checked = false;
+        
 
         // Draw Pipes
         this.draw = function() {
             // Draw Top Pipe
             context.beginPath();
             context.rect(this.x, 0, this.w, this.top);
-            context.fillRect = "white";
+            context.fillStyle = "white";
             context.fill();
 
             // Draw Bottom Pipe
             context.beginPath();
             context.rect(this.x, height - this.bottom, this.w, this.bottom);
-            context.fillRect = "white";
+            context.fillStyle = "white";
             context.fill();
+
+            console.log("Yes");
         }
 
         // Clear Pipe Path

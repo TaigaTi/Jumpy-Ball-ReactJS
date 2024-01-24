@@ -1,7 +1,8 @@
 import './App.css'
-import Game from './Game'
+import Canvas from './Canvas'
 
 function App() {
+
   return (
     <>
       <div className="App">
@@ -9,7 +10,7 @@ function App() {
           <h1>My Jumper Game</h1>
           <p>A fun flappy-bird like game.</p>
         </div>
-        <Game />
+        <Canvas height={400} width={600} />
       </div>
     </>
   )
